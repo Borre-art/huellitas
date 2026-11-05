@@ -1,0 +1,22 @@
+// Datos de cada guía. No se requieren servidor, cuentas ni librerías.
+const pets={
+ perro:{title:'Lo esencial para tu perro',tips:[['Alimentación','Dale alimento adecuado a su edad y tamaño. Mantén agua limpia disponible.'],['Actividad','Comparte paseos y juego cada día, adaptados a su energía y condición.'],['Higiene y salud','Cepilla su pelo, cuida sus dientes y acuerda revisiones y vacunas con el veterinario.']],checks:['Cambiar el agua y limpiar su recipiente','Servir su alimento habitual','Compartir un paseo y tiempo de juego','Revisar y limpiar su espacio']},
+ gato:{title:'Lo esencial para tu gato',tips:[['Alimentación','Ofrece alimento completo para gatos según su edad y agua limpia disponible.'],['Juego y descanso','Prepara un rascador, juguetes seguros y un lugar tranquilo donde pueda refugiarse.'],['Higiene y salud','Retira los desechos del arenero a diario. Cepilla su pelo y programa revisiones veterinarias.']],checks:['Cambiar el agua y limpiar su recipiente','Servir su alimento habitual','Compartir juego con juguetes seguros','Retirar los desechos del arenero']},
+ conejo:{title:'Lo esencial para tu conejo',tips:[['Alimentación','El heno debe ser la base de su dieta y estar siempre disponible, junto con agua fresca.'],['Espacio y compañía','Necesita espacio seguro para moverse y esconderse. Consulta sobre compañía compatible de su especie.'],['Higiene y salud','Limpia su zona y observa su apetito y sus heces cada día. Si deja de comer, contacta al veterinario de inmediato.']],checks:['Cambiar el agua y limpiar su recipiente','Reponer heno limpio y su alimento habitual','Ofrecer movimiento en un espacio seguro','Limpiar su zona y observar apetito y heces']}
+};
+let selected='perro';
+let state={};
+let day='';
+let canSave=true;
+function localDay(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`}
+function loadDay(){day=localDay();try{const saved=JSON.parse(localStorage.getItem('huellitas-rutina'));state=saved?.day===day&&saved.state&&typeof saved.state==='object'?saved.state:{}}catch{state={};canSave=false}}
+function save(){try{localStorage.setItem('huellitas-rutina',JSON.stringify({day,state}))}catch{canSave=false}document.querySelector('#storage-note').textContent=canSave?'':'No se pudo guardar en este navegador. Puedes usar la lista mientras la página esté abierta.'}
+function values(){return Array.from({length:4},(_,i)=>state[selected]?.[i]===true)}
+function progress(){const count=values().filter(Boolean).length;document.querySelector('#counter').textContent=`${count} de 4 completados`;document.querySelector('#progress').value=count;document.querySelector('#feedback').textContent=count===4?'¡Rutina completada! Gracias por cuidar de tu compañero.':'Cada pequeño cuidado cuenta.';document.querySelector('#reset').disabled=count===0}
+function render(){const pet=pets[selected];document.querySelectorAll('[data-pet]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.pet===selected)));document.querySelector('#guide').innerHTML=`<div class="guide-title"><h3>${pet.title}</h3><span class="badge">Guía básica</span></div><div class="tips">${pet.tips.map((t,i)=>`<article class="tip"><span class="tip-number">0${i+1}</span><h4>${t[0]}</h4><p>${t[1]}</p></article>`).join('')}</div>`;document.querySelector('#pet-name').textContent=selected;document.querySelector('#checks').innerHTML=pet.checks.map((t,i)=>`<label class="check"><input type="checkbox" data-index="${i}" ${values()[i]?'checked':''}><span>${t}</span></label>`).join('');progress()}
+function rollover(){if(localDay()!==day){loadDay();render()}}
+document.querySelectorAll('[data-pet]').forEach(b=>b.addEventListener('click',()=>{rollover();selected=b.dataset.pet;render()}));
+document.querySelector('#checks').addEventListener('change',e=>{if(!e.target.matches('input'))return;const index=Number(e.target.dataset.index),checked=e.target.checked;rollover();state[selected]=values();state[selected][index]=checked;save();render()});
+document.querySelector('#reset').addEventListener('click',()=>{rollover();state[selected]=[false,false,false,false];save();render()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)rollover()});setInterval(rollover,30000);
+loadDay();render();if(!canSave)document.querySelector('#storage-note').textContent='El guardado local no está disponible; la lista funciona mientras la página esté abierta.';
