@@ -16,9 +16,9 @@ La rama `codex/cartillas-supabase` agrega:
 
 Las guías y la rutina diaria original continúan disponibles. La rutina original sigue guardándose localmente por especie; las nuevas cartillas usan Supabase.
 
-## Estado de activación
+## Configuración actual
 
-**El código está preparado, pero la base remota no ha sido instalada ni conectada.** No se debe integrar a producción hasta completar la configuración y las verificaciones descritas abajo. `config.js` está deliberadamente vacío: la página informa que el acceso aún no está disponible y desactiva los formularios.
+El esquema está instalado en Supabase y `config.js` contiene la configuración pública del cliente. Las redirecciones de autenticación apuntan a `mascotas.html` en GitHub Pages.
 
 ## Arquitectura
 
@@ -35,7 +35,7 @@ Supabase gestiona el backend. PostgreSQL aplica RLS al propietario autenticado y
 1. Confirmar qué proyecto se usará e inspeccionar sus tablas y políticas existentes. Los objetos nuevos tienen el prefijo `huellitas_`; la tabla de la práctica anterior no se modifica.
 2. Ejecutar una sola vez `supabase/schema.sql`. Si hay nombres en conflicto, revisar el esquema antes de ejecutar; el script no elimina ni reemplaza datos existentes.
 3. En Authentication, habilitar el proveedor Email y mantener la confirmación de correo. Configurar:
-   - Site URL: `https://borre-art.github.io/huellitas/`
+   - Site URL: `https://borre-art.github.io/huellitas/mascotas.html`
    - Redirect URL: `https://borre-art.github.io/huellitas/mascotas.html`
 4. Verificar la entrega de correos de confirmación y recuperación. El correo predeterminado de Supabase tiene restricciones; para usuarios reales puede necesitarse un SMTP configurado. No desactivar la confirmación para ocultar un problema de entrega.
 5. Completar `config.js` con la URL del proyecto y una clave **publishable** (`sb_publishable_...`). Ambas son configuración pública del frontend. Nunca colocar claves secretas, `service_role`, contraseña de PostgreSQL ni tokens de administración en el repositorio.
