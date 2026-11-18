@@ -1,0 +1,50 @@
+name: Cartillas - validación y privacidad
+on:
+  pull_request:
+    paths:
+      - '*.js'
+      - '*.html'
+      - '*.css'
+      - 'supabase/**'
+      - 'tests/**'
+      - '.github/workflows/cartillas.yml'
+permissions:
+  contents: read
+jobs:
+  cartillas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: huellitas_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Sintaxis y reglas de cartillas
+        run: |
+          node --check cartilla.js
+          node --check cartilla-utils.js
+          node --check app.js
+          node tests/cartilla.test.cjs
+      - name: Esquema y aislamiento entre dos usuarios
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: huellitas_test
+        run: |
+          psql -v ON_ERROR_STOP=1 -f tests/database-bootstrap.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/schema.sql
+          psql -v ON_ERROR_STOP=1 -f tests/ownership.sql

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Cartillas privadas, historial de salud y documentos para tus mascotas.">
+<meta name="referrer" content="strict-origin-when-cross-origin"><title>Mis mascotas | Huellitas</title>
+<link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="cartilla.css">
+<script src="config.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js" defer></script>
+<script src="cartilla-utils.js" defer></script><script src="cartilla.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header><a class="brand" href="index.html"><span aria-hidden="true">✿</span> huellitas<span class="dot">.</span></a><nav aria-label="Navegación principal"><a href="index.html#guias">Cuidados</a><a href="index.html#rutina">Rutina diaria</a><a href="mascotas.html" aria-current="page" class="nav-cta">Mis mascotas</a></nav></header>
+<main id="contenido" class="pet-app">
+<div class="app-heading"><div><p class="eyebrow">UN LUGAR PARA SU HISTORIA</p><h1>Sus cuidados,<br><em>siempre contigo.</em></h1><p>Una cartilla para cada compañero. Guarda su historia y ten a mano su próxima visita.</p></div><div class="privacy-note"><span aria-hidden="true">♡</span><strong>Tu espacio personal</strong><p>Las cartillas y los documentos son privados para tu cuenta.</p></div></div>
+<div id="app-message" class="notice" role="status" aria-live="polite" hidden></div>
+<noscript><p class="notice">Activa JavaScript para consultar tus mascotas.</p></noscript>
+<section id="auth-panel" class="auth-panel" aria-labelledby="auth-title">
+<div><p class="eyebrow">BIENVENIDO A HUELLITAS</p><h2 id="auth-title">Entra a tu cuenta</h2><p>Tu información te acompaña, incluso cuando cambias de dispositivo.</p><ul class="auth-benefits"><li>Una ficha para cada mascota</li><li>Vacunas, consultas y registro de peso</li><li>Fotos y documentos en el mismo lugar</li></ul></div>
+<div class="form-card">
+<div id="auth-choices" class="segmented" role="group" aria-label="Acceso a tu cuenta"><button type="button" data-auth="login" aria-pressed="true">Iniciar sesión</button><button type="button" data-auth="signup" aria-pressed="false">Crear cuenta</button></div>
+<form id="auth-form"><fieldset id="auth-fields" disabled>
+<label id="email-label">Correo electrónico<input id="auth-email" name="email" type="email" autocomplete="email" maxlength="254" required></label>
+<label id="password-label">Contraseña<input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="8" maxlength="128" required><small>Al menos 8 caracteres.</small></label>
+<button type="submit" class="button wide" id="auth-submit">Entrar</button><button type="button" id="forgot-password" class="text-link">Olvidé mi contraseña</button>
+</fieldset><p id="auth-message" class="form-message" role="status" aria-live="polite"></p></form>
+<p class="small">Las fechas y notas son las que tú registras. Conserva también los comprobantes del veterinario.</p></div></section>
+<section id="account-panel" hidden aria-label="Mis mascotas y cartillas">
+<div class="account-toolbar"><p>Tu cuenta: <strong id="account-email"></strong></p><div class="actions"><button id="refresh" type="button" class="secondary">Actualizar</button><button id="logout" type="button" class="text-link">Cerrar sesión</button></div></div>
+<div class="stats"><div><span id="stat-pets">0</span><p>Mascotas activas</p></div><div><span id="stat-pending">0</span><p>Cuidados pendientes</p></div><div><span id="stat-documents">0</span><p>Documentos guardados</p></div></div>
+<div class="workspace"><aside class="pet-sidebar"><div class="section-head"><h2>Mis mascotas</h2><button id="add-pet" type="button" class="secondary">+ Agregar</button></div><label class="archive-toggle"><input id="show-archived" type="checkbox"> Ver archivadas</label><div id="pet-list" class="pet-list"></div></aside><div id="pet-detail" class="pet-detail"></div></div>
+<section class="upcoming" aria-labelledby="upcoming-title"><div class="section-head"><div><p class="eyebrow">PARA TENER PRESENTE</p><h2 id="upcoming-title">Próximos cuidados</h2></div><p>Fechas que registraste con tu veterinario.</p></div><div id="upcoming-list"></div><p class="small">Los avisos se muestran aquí al entrar. Esta versión no envía correos automáticos.</p></section>
+</section></main>
+<footer><a class="brand" href="index.html">huellitas.</a><p>Pequeños cuidados, grandes compañeros.</p><p>Tu cartilla personal acompaña la atención de tu veterinario.</p></footer>
+<dialog id="pet-dialog" aria-labelledby="pet-dialog-title"><form id="pet-form"><div class="dialog-head"><h2 id="pet-dialog-title">Agregar mascota</h2><button type="button" class="close" data-close aria-label="Cerrar">×</button></div><input name="id" type="hidden"><div class="form-grid">
+<label>Nombre<input name="nombre" maxlength="80" required autocomplete="off"></label>
+<label>Especie<select name="especie" required><option value="gato">Gato</option><option value="perro">Perro</option><option value="conejo">Conejo</option><option value="otro">Otra especie</option></select></label>
+<label>Raza o mezcla (opcional)<input name="raza" maxlength="100"></label>
+<label>Sexo<select name="sexo"><option value="desconocido">No lo sé</option><option value="hembra">Hembra</option><option value="macho">Macho</option></select></label>
+<label>Nacimiento aproximado (opcional)<input name="nacimiento" type="date"></label>
+<label class="checkbox-field"><input name="esterilizada" type="checkbox"> Está esterilizada/o</label>
+<label class="span-all">Alergias y notas importantes (opcional)<textarea name="notas" rows="3" maxlength="4000"></textarea></label>
+</div><p class="small">Agrega su foto desde Documentos después de guardar.</p><p class="form-message" role="status" aria-live="polite"></p><div class="dialog-actions"><button type="button" class="secondary" data-close>Cancelar</button><button type="submit" class="button">Guardar mascota</button></div></form></dialog>
+<dialog id="record-dialog" aria-labelledby="record-dialog-title"><form id="record-form"><div class="dialog-head"><h2 id="record-dialog-title">Agregar registro</h2><button type="button" class="close" data-close aria-label="Cerrar">×</button></div><input name="id" type="hidden"><input name="mascota_id" type="hidden"><div class="form-grid">
+<label>Tipo<select name="tipo"><option value="vacuna">Vacuna</option><option value="desparasitacion">Desparasitación</option><option value="consulta">Consulta</option><option value="tratamiento">Tratamiento</option><option value="peso">Peso</option></select></label>
+<label>Título<input name="titulo" maxlength="120" required placeholder="Ej. Revisión anual"></label>
+<label>Fecha del registro<input name="fecha" type="date" required></label>
+<label>Próxima fecha (opcional)<input name="proxima_fecha" type="date"></label>
+<label id="weight-field" hidden>Peso en kg<input name="peso_kg" type="number" step="0.001" min="0.001" max="1000" inputmode="decimal"></label>
+<label>Veterinario o clínica (opcional)<input name="veterinario" maxlength="160"></label>
+<label class="checkbox-field span-all"><input name="seguimiento_completado" type="checkbox"> Ya atendí el cuidado de la próxima fecha</label>
+<label class="span-all">Observaciones (opcional)<textarea name="notas" rows="3" maxlength="4000"></textarea></label>
+</div><p class="small">Copia la información indicada por tu veterinario.</p><p class="form-message" role="status" aria-live="polite"></p><div class="dialog-actions"><button type="button" class="secondary" data-close>Cancelar</button><button type="submit" class="button">Guardar registro</button></div></form></dialog>
+<dialog id="document-dialog" aria-labelledby="document-dialog-title"><form id="document-form"><div class="dialog-head"><h2 id="document-dialog-title">Guardar documento</h2><button type="button" class="close" data-close aria-label="Cerrar">×</button></div><input name="mascota_id" type="hidden">
+<label>Nombre del documento<input name="nombre" maxlength="180" required placeholder="Ej. Cartilla de vacunación"></label>
+<label>Tipo<select name="tipo"><option value="cartilla">Cartilla física</option><option value="foto">Foto de mi mascota</option><option value="receta">Receta</option><option value="estudio">Estudio</option><option value="otro">Otro</option></select></label>
+<label>Archivo<input name="archivo" type="file" accept="image/jpeg,image/png,image/webp,application/pdf" required><small>JPG, PNG, WebP o PDF. Máximo 10 MB.</small></label>
+<p class="form-message" role="status" aria-live="polite"></p><div class="dialog-actions"><button type="button" class="secondary" data-close>Cancelar</button><button type="submit" class="button">Subir documento</button></div></form></dialog>
+<dialog id="confirm-dialog" aria-labelledby="confirm-title"><form method="dialog"><h2 id="confirm-title">Confirmar acción</h2><p id="confirm-description"></p><div class="dialog-actions"><button value="cancel" class="secondary" autofocus>Cancelar</button><button value="ok" class="button" id="confirm-ok">Confirmar</button></div></form></dialog>
+<dialog id="download-dialog" aria-labelledby="download-title"><div class="dialog-head"><h2 id="download-title">Documento listo</h2><button type="button" class="close" data-close aria-label="Cerrar">×</button></div><p>Este enlace privado vence en un minuto. Si vence, solicita el documento otra vez.</p><a id="download-link" class="button" target="_blank" rel="noopener noreferrer">Descargar archivo</a></dialog>
+<section id="print-sheet" aria-label="Cartilla para imprimir"></section>
+</body></html>
